@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>Main.qml</file>
+        <file>pages/dashboard/DragDropSong.qml</file>
+        <file>pages/dashboard/SongsList.qml</file>
+        <file>pages/dashboard/Dashboard.qml</file>
+        <file>pages/MainWindow.qml</file>
+        <file>components/song/SongItem.qml</file>
+        <file>layouts/Header.qml</file>
+        <file>themes/Theme.qml</file>
+        <file>pages/dashboard/SongListItem.qml</file>
+        <file>pages/Viewer3D.qml</file>
+    </qresource>
+</RCC>

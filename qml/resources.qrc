@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC>
+    <qresource prefix="/images">
+        <!--<file>images/logo.png</file>-->
+        <!-- Other image files -->
+    </qresource>
+    <qresource prefix="/sounds">
+         <!--<file><file>sounds/click.wav</file>-->
+        <!-- Other sound files -->
+    </qresource>
+</RCC>

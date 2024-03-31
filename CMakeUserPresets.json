@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "C:\\Moary Project\\moary_studio\\src\\libs\\conan_libs\\CMakePresets.json"
+    ]
+}
