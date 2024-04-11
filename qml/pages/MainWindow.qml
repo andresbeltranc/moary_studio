@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../pages/dashboard"
+import "../pages/Project"
+
 import "../layouts"
 import Qt5Compat.GraphicalEffects
 
@@ -9,7 +11,9 @@ import Qt5Compat.GraphicalEffects
 Window {
     id: root_window
     width: 1000
+    minimumWidth: 800
     height: 800
+    minimumHeight: 600
     visible: true
     flags: Qt.Window | Qt.FramelessWindowHint
     color: "transparent"
@@ -48,14 +52,23 @@ Window {
             Layout.fillWidth: true
             height: 30
         }
-        Dashboard{
+
+        LoadProject{
             anchors.top: header.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+
         }
+
+        // Dashboard{
+        //     anchors.top: header.bottom
+        //     anchors.left: parent.left
+        //     anchors.right: parent.right
+        //     anchors.bottom: parent.bottom
+        //     Layout.fillWidth: true
+        //     Layout.fillHeight: true
+        // }
 
     }
 }

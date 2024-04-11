@@ -10,5 +10,13 @@
         <file>themes/Theme.qml</file>
         <file>pages/dashboard/SongListItem.qml</file>
         <file>pages/Viewer3D.qml</file>
+        <file>assets/fonts/IndieFlower-Regular.ttf</file>
+        <file>common/text/MoaryText.qml</file>
+        <file>common/shape/MoaryRectangle.qml</file>
+        <file>common/popups/MoaryPopup.qml</file>
+        <file>pages/Project/CreateProjectPopup.qml</file>
+        <file>pages/Project/LoadProject.qml</file>
+        <file>components/TextFields/FormTextField.qml</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

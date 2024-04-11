@@ -1,9 +1,11 @@
 import QtQuick
 import "../"
 Rectangle{
+    id: dashboardItem
     width: parent.width
     height: parent.height
     color:"transparent"
+    property var currentSongObject: null
 
 
     DragDropSong{

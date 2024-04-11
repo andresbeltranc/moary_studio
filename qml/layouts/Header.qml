@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts
 import QtQuick.Controls.Basic
+import QtQuick.Effects
 
 Item {
     id: root_header
@@ -58,17 +59,18 @@ Item {
             root_window.visibility = Window.Minimized;
         }
 
-        Text {
-            height: parent.height
-            width: paintedWidth
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            text: qsTr("Moary Studio")
-            color: master.currentTheme.headerTitleColor
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+        // Text {
+        //     height: parent.height
+        //     width: paintedWidth
+        //     anchors.left: parent.left
+        //     anchors.leftMargin: 10
+        //     font.family: master.currentTheme.projectFont.name
+        //     text: qsTr("Moary Studio")
+        //     color: master.currentTheme.headerIconsWindowColor
+        //     horizontalAlignment: Text.AlignHCenter
+        //     verticalAlignment: Text.AlignVCenter
 
-        }
+        // }
 
         // Minimize Button
         Button {
@@ -88,6 +90,15 @@ Item {
                 color: master.currentTheme.headerIconsWindowColor
                 font.bold: parent.font.bold
                 font.pixelSize: parent.font.pixelSize
+                layer.enabled: true
+                layer.effect: MultiEffect{
+                    brightness: 0.3
+                    saturation: 0.5
+                    blurEnabled: true
+                    blurMax: 30
+                    blur: 0.1
+
+                }
             }
             onClicked:{
                 console.log("click")
@@ -109,6 +120,16 @@ Item {
                 color: master.currentTheme.headerIconsWindowColor
                 font.bold: parent.font.bold
                 font.pixelSize: parent.font.pixelSize
+                layer.enabled: true
+                layer.effect: MultiEffect{
+                    brightness:  0.3
+                    saturation: 0.5
+                    blurEnabled: true
+                    blurMax: 30
+                    blur: 0.1
+
+                }
+
             }
             background: Rectangle{
                 anchors.fill: parent
@@ -140,6 +161,15 @@ Item {
                 color: master.currentTheme.headerIconsWindowColor
                 font.bold: parent.font.bold
                 font.pixelSize: 16
+                layer.enabled: true
+                layer.effect: MultiEffect{
+                    brightness:  0.3
+                    saturation: 0.5
+                    blurEnabled: true
+                    blurMax: 30
+                    blur: 0.1
+
+                }
             }
             background: Rectangle{
                 anchors.fill: parent

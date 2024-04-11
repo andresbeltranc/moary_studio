@@ -11,7 +11,7 @@ set(CONAN_LIBS_FOLDER "conan_libs")
 set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/src/libs/${CONAN_LIBS_FOLDER}")
 
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Multimedia Concurrent)
 qt_standard_project_setup(REQUIRES 6.5)
 
 find_package(SndFile REQUIRED)
@@ -24,12 +24,14 @@ set(PROJECT_SOURCES
     src/utils/Singleton.h
 
 
-    src/controllers/Audio/audioextractor.h
-    src/controllers/Audio/audioextractor.cpp
-    src/controllers/windowcontroller.h
-    src/controllers/windowcontroller.cpp
-    src/applicationmanager.h
-    src/applicationmanager.cpp
+    src/controllers/Audio/audio_controller.h
+    src/controllers/Audio/audio_controller.cpp
+    src/controllers/window_controller.h
+    src/controllers/window_controller.cpp
+    src/application_manager.h
+    src/application_manager.cpp
+    src/persistance/persistance_controller.h 
+    src/persistance/persistance_controller.cpp
     src/main.cpp
     qml/qml.qrc
 )
@@ -63,6 +65,8 @@ endif()
 
 target_link_libraries(MoaryStudio PRIVATE
     Qt6::Quick
+    Qt6::Multimedia
+    Qt6::Concurrent
     SndFile::sndfile
     taglib::taglib
 )

@@ -5,6 +5,8 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    QGuiApplication::setApplicationDisplayName("Moary Studio");
+    QGuiApplication::setOrganizationName("Moary");
     ApplicationManager appManager;
     appManager.setupApplication();
     return app.exec();

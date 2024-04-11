@@ -1,13 +1,18 @@
 #include "audio_controller.h"
-//#include "AudioFile.h"
 #include <QDebug>
 #include <sndfile.hh> // The C++ wrapper for libsndfile
 #include <taglib/tag.h>
 #include <taglib/fileref.h>
+#include <QtConcurrent>
+#include <QFuture>
+#include <QFutureWatcher>
 
-AudioController::AudioController(QObject *parent)
+
+
+AudioController::AudioController(QObject *parent): QThread(parent)
 {
 
+    start();
 }
 
 QVariantMap  AudioController::loadAudio(QString path)
@@ -29,11 +34,6 @@ QVariantMap  AudioController::loadAudio(QString path)
     audioData["sampleRate"] = sampleRate;
     audioData["framesPerRead"] = framesPerRead;
     audioData["numberOfChannels"] = channels;
-
-
-    // audioData.sampleRate = sampleRate;
-    // audioData.framesPerRead = framesPerRead;
-    // audioData.numberOfChannels = channels;
     TagLib::FileRef Tabfile(path.toStdString().c_str());
     if (!Tabfile.isNull() && Tabfile.tag()) {
         TagLib::Tag* tag = Tabfile.tag();
@@ -47,16 +47,8 @@ QVariantMap  AudioController::loadAudio(QString path)
         qDebug() << "Error opening file or no valid tag.";
     }
 
-
-
-
     std::vector<float> buffer(framesPerRead * channels);
     sndfile.readf(buffer.data(), framesPerRead);
-    // std::vector<std::vector<float>> channelBuffers(channels);
-    // for (int ch = 0; ch < channels; ++ch) {
-    //     channelBuffers[ch].resize(framesPerRead);
-    // }
-
     if(channels == 1){
         QVariantList channelData;
         for (int i = 0; i < framesPerRead; ++i) {

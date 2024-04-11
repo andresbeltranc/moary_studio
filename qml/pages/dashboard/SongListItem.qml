@@ -2,16 +2,26 @@ import QtQuick 2.15
 import Qt5Compat.GraphicalEffects
 
 Item {
+    id: songItem
+    property bool currentItem: false
 
-
+    Component.onCompleted: {
+        dashboardItem.onCurrentSongObjectChanged.connect(function(obj){
+            if(obj === songItem){
+                currentItem = true
+            }else{
+                currentItem = false
+            }
+        })
+    }
     Rectangle{
-        id:songItem
+        id: songRect
         anchors.fill: parent
         color: master.currentTheme.dashboardBackgroundColor
         layer.enabled: true
         radius: 5
         layer.effect: DropShadow {
-            color: master.currentTheme.headerIconsWindowColor
+            color: currentItem ? "white" :master.currentTheme.headerIconsWindowColor
             radius: 5
             horizontalOffset: 0
             verticalOffset: 0.5
@@ -33,6 +43,12 @@ Item {
                 if(textScrollAnimation.running){
                     textScrollAnimation.running = false;
                     textFileName.x = 0
+                }
+            }
+            onClicked: {
+                if(dashboardItem.currentSongObject != songItem){
+                    dashboardItem.currentSongObject = songItem
+                    currentItem = true
                 }
             }
 

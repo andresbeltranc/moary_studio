@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <QVariant>
-#include "audiodata.h"
-class AudioController : public QObject
+#include <QMutex>
+#include <QThread>
+
+class AudioController : public QThread
 {
     Q_OBJECT
 public:
-    AudioController(QObject *parent = nullptr);
+    explicit AudioController(QObject *parent = nullptr);
 
 public slots:
     QVariantMap loadAudio(QString path);
