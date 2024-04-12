@@ -149,7 +149,6 @@ LRESULT CALLBACK CustomWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
 
 
 void WindowController::restoreAndMoveWindow(QQuickWindow *window) {
-    qDebug() << "restoreAndMoveWindow";
     if (!window) return;
     HWND hwnd = getHWND(window);
 

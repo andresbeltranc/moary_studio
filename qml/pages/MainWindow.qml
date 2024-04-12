@@ -26,7 +26,6 @@ Window {
         }
     }
     Component.onCompleted: {
-        console.log("onCl")
         windowController.restoreAndMoveWindow(root_window)
         root_window.visible= true
         root_window.raise()

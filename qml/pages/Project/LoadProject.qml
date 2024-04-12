@@ -12,8 +12,11 @@ Rectangle{
     CreateProjectPopup{
         id: createProjectPopup
         visible: false
-        width: parent.width * 0.7
-        height: parent.height * 0.5
+        property int maxWidth: 800
+        property int maxHeight:600
+
+        width: Math.min(parent.width * 0.6, maxWidth)
+        height: Math.min(parent.height * 0.5, maxHeight)
         anchors.centerIn: parent
     }
 
@@ -223,6 +226,8 @@ Rectangle{
                 anchors.leftMargin: 100
                 anchors.top: getStartedSubtitle.bottom
                 anchors.topMargin: 10
+                effectBrightness: newprojectIcon.currentBrightness
+
                 radius: 4
                 border.width: 1
                 border.color: master.currentTheme.headerIconsWindowColor
@@ -233,10 +238,12 @@ Rectangle{
                     id: newprojectIcon
                     width: 50
                     height: parent.height
+                    property real currentBrightness: 0.2
                     color: "transparent"
                     MoaryRectangle{
                         width: 2
                         height: parent.height * 0.55
+                        effectBrightness: newprojectIcon.currentBrightness
                         color: master.currentTheme.headerIconsWindowColor
                         anchors.centerIn: parent
                         radius: 4
@@ -246,6 +253,7 @@ Rectangle{
                     MoaryRectangle{
                         width: parent.height * 0.55
                         height: 2
+                        effectBrightness: newprojectIcon.currentBrightness
                         color: master.currentTheme.headerIconsWindowColor
                         anchors.centerIn: parent
                         radius: 4
@@ -260,6 +268,7 @@ Rectangle{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: newprojectIcon.right
                     anchors.leftMargin: 10
+                    effectBrightness: newprojectIcon.currentBrightness
                     font.bold: true
                     anchors.right: parent.right
                     font.family: master.currentTheme.projectFont.name
@@ -269,11 +278,29 @@ Rectangle{
                 MouseArea{
                     id: newProjectMouseArea
                     anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
                     onClicked: {
                         if(!createProjectPopup.opened){
                             createProjectPopup.open()
                         }
                     }
+                    onClipChanged: {
+                        if(clip){
+                            newprojectIcon.currentBrightness = 0.3
+                        }
+                    }
+
+                    onEntered: {
+                        newprojectIcon.currentBrightness = 0.5
+
+                    }
+                    onExited: {
+                        newprojectIcon.currentBrightness = 0.2
+
+                    }
+
                 }
             }
         }
