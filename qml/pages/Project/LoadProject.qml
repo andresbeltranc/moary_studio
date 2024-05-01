@@ -1,6 +1,8 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
+import QtQuick.Controls
+import QtQuick.Layouts
 import "../../common/text"
 import "../../common/shape"
 
@@ -8,6 +10,9 @@ Rectangle{
     id: loadProject
     color:"transparent"
 
+    Component.onDestruction: {
+        console.log("remove loadProject page")
+    }
 
     CreateProjectPopup{
         id: createProjectPopup
@@ -119,78 +124,33 @@ Rectangle{
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 width: parent.width
+                property var listOfProjects: []
                 ListModel{
                     id: moaryProjects
-
-                    ListElement{
-                        projectName: "Test Project"
-                        projectPath: "C:/Users/Owner/Documents/MoaryStudio/Projects/TestProject"
-                        lastOpened: "Today"
-                        size: "1.2MB"
-                    }
-                    ListElement{
-                        projectName: "Project 2"
-                        projectPath: "C:/Users/Owner/Documents/MoaryStudio/Projects/TestProject"
-                        lastOpened: "Today"
-                        size: "1.2MB"
-                    }
-                    ListElement{
-                        projectName: "Test Audio Project 1"
-                        projectPath: "C:/Users/Owner/Documents/MoaryStudio/Projects/TestProject"
-                        lastOpened: "Today"
-                        size: "1.2MB"
-                    }
                 }
                 ListView{
                     id: projectListView
                     anchors.fill: parent
-                    model: moaryProjects
                     spacing: 30
+                    Component.onCompleted: {
+                        projectList.listOfProjects = projectController.projectsList
+                        for (var i = 0; i < projectList.listOfProjects.length; i++){
+                            var currentProject = projectList.listOfProjects[i]
+                            moaryProjects.append(currentProject)
+                        }
+                        model = moaryProjects
+                    }
 
-                    delegate: Item{
+                    delegate: ProjectItemView{
+                        id: projectItem
                         width: parent.width
                         height: 50
-                        Rectangle{
-                            id: projectItem
-                            color: "transparent"
-                            anchors.fill: parent
-                            MouseArea{
-                                id: projectItemMouseArea
-                                anchors.fill: parent
-                                onClicked: {
-                                    master.loadProject(model.projectPath)
-                                }
-                            }
-                            MoaryText{
-                                id: projectName
-                                text: model.projectName
-                                font.pixelSize: 16
-                                color: master.currentTheme.headerIconsWindowColor
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                anchors.topMargin: 10
-                            }
-                            MoaryText{
-                                id: projectPath
-                                text: model.projectPath
-                                font.pixelSize: 10
-                                color: master.currentTheme.headerIconsWindowColor
-                                anchors.top: projectName.bottom
-                                anchors.topMargin: 10
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                            }
-                            MoaryText{
-                                id: lastOpened
-                                text: model.lastOpened
-                                font.pixelSize: 10
-                                color: master.currentTheme.headerIconsWindowColor
-                                anchors.right: parent.right
-                                width: paintedWidth
-                                anchors.rightMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 5
-                            }
+                        onClicked: {
+                            var currentProjectObject = projectController.projectsList[index]
+                            projectController.setCurrentProject(currentProjectObject)
+                            currentProjectObject.loadAudioSamplesFromLocalStorage()
+                            mainWindow.changeLoaderSource("qrc:/qml/pages/dashboard/Dashboard.qml")
+                            ///console.log("clicked",projectController.currentProject.name)
                         }
                     }
                 }

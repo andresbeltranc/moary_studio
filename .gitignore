@@ -6,14 +6,16 @@ bin-release/
 
 # Other files and folders
 .settings/
+CMakeLists.txt.user
 
 # Executables
 *.swf
 *.air
 *.ipa
 *.apk
-
-
+*.obj
+*.mtl
+/qml/assets/3D
 /build
 /src/libs/conan_libs
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`

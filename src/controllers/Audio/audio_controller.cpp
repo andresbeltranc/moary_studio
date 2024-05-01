@@ -9,19 +9,63 @@
 
 
 
-AudioController::AudioController(QObject *parent): QThread(parent)
+
+
+AudioController::AudioController(QObject *parent)
 {
 
-    start();
 }
 
-QVariantMap  AudioController::loadAudio(QString path)
+std::vector<float> AudioController::linear_interpolation(const std::vector<float>& original_data, int num_interpolated_points) {
+    qDebug() << "linear_interpolation";
+    std::vector<float> interpolated_data(num_interpolated_points);
+
+    // Create an array of indices for the original data
+    qDebug() << "Create an array of indices for the original data";
+
+    std::vector<float> indices(original_data.size());
+    for (size_t i = 0; i < original_data.size(); ++i) {
+        indices[i] = static_cast<float>(i);
+    }
+    qDebug() << "indices S" << indices.size();
+
+    // Create an array of indices for the interpolated data
+    qDebug() << "Create an array of indices for the interpolated data";
+    std::vector<float> interpolated_indices(num_interpolated_points);
+    for (int i = 0; i < num_interpolated_points; ++i) {
+        interpolated_indices[i] = i * (original_data.size() - 1) / static_cast<float>(num_interpolated_points - 1);
+    }
+
+    qDebug() << "interpolated_indices S" << interpolated_indices.size();
+    // Perform linear interpolation
+    qDebug() << "Perform linear interpolation";
+
+    // Perform linear interpolation
+    for (int i = 0; i < num_interpolated_points; ++i) {
+        float index = interpolated_indices[i];
+        size_t lower_index = static_cast<size_t>(index);
+        size_t upper_index = std::min(lower_index + 1, original_data.size() - 1);  // Ensure upper index is within bounds
+        float t = index - lower_index;
+
+        interpolated_data[i] = (1.0f - t) * original_data[lower_index] + t * original_data[upper_index];
+    }
+
+    return interpolated_data;
+}
+
+
+
+
+AudioSample* AudioController::getAudioSampleFromFile(QString path)
 {
     SndfileHandle sndfile(path.toStdString().c_str()); // Open the audio file
     if (sndfile.error()) {
         qDebug() << "Error: invalid audio file";
         //return ;
     }
+    std::filesystem::path filePath(path.toStdString().c_str());
+    std::string fileName = filePath.filename().string();
+    AudioSample *audioSample = new AudioSample();
     SNDFILE* rawFile = sndfile.rawHandle();
     QVariantMap audioData;
     const sf_count_t totalFrames = sndfile.frames();
@@ -30,56 +74,57 @@ QVariantMap  AudioController::loadAudio(QString path)
     const int secondsToRead = static_cast<double>(totalFrames) / sampleRate; // Adjust as needed
     const int framesPerRead = qMin(totalFrames, channels * sampleRate * secondsToRead);
 
-    audioData["secondsToRead"] = secondsToRead;
-    audioData["sampleRate"] = sampleRate;
-    audioData["framesPerRead"] = framesPerRead;
-    audioData["numberOfChannels"] = channels;
+    audioSample->setFileName(QString::fromStdString(fileName));
+    audioSample->setFilePath(path);
+    audioSample->setChannels(channels);
+    audioSample->setSampleRate(sampleRate);
+    audioSample->setSecondsToRead(secondsToRead);
+    audioSample->setFramesPerRead(framesPerRead);
+
     TagLib::FileRef Tabfile(path.toStdString().c_str());
     if (!Tabfile.isNull() && Tabfile.tag()) {
         TagLib::Tag* tag = Tabfile.tag();
         std::string title = tag->title().toCString(true);
         std::string artist = tag->artist().toCString(true);
         std::string album = tag->album().toCString(true);
-        audioData["audioName"] = QString::fromStdString(title);
-        audioData["artist"] = QString::fromStdString(artist);
-        audioData["album"] = QString::fromStdString(album);
+        audioSample->setAudioName(QString::fromStdString(title));
+        audioSample->setAudioArtist(QString::fromStdString(artist));
+        audioSample->setAudioAlbum(QString::fromStdString(album));
     } else {
         qDebug() << "Error opening file or no valid tag.";
     }
 
     std::vector<float> buffer(framesPerRead * channels);
     sndfile.readf(buffer.data(), framesPerRead);
+    QVariantList channelData;
     if(channels == 1){
-        QVariantList channelData;
-        for (int i = 0; i < framesPerRead; ++i) {
-            channelData.append(buffer[i]);
+        std::vector<float> interpolated_buffer = linear_interpolation(buffer, 500);
+        for (int i = 0; i < interpolated_buffer.size(); ++i) {
+            channelData.append(QVariant(interpolated_buffer[i]));
         }
-        audioData["channelsData"] = channelData;
+        audioSample->setDataBuffer(buffer);
+        audioSample->setInterpolatedData(interpolated_buffer);
+        audioSample->setInterpolatedDataList(channelData);
+
 
     }else if(channels == 2){
-
-        QVariantList leftChannel;
-        leftChannel.reserve(framesPerRead);
-        QVariantList rightChannel;
-        rightChannel.reserve(framesPerRead);
-        QVariantList channelData;
-
+        std::vector<float> monoChannel;
+        monoChannel.reserve(framesPerRead);
         for (int var = 0; var < framesPerRead; ++var) {
-            leftChannel.append( buffer[var * channels]);
-            rightChannel.append(buffer[var * channels + 1]);
+            float leftSample = buffer[var * channels];
+            float rightSample = buffer[var * channels + 1];
+            float monoSample = (leftSample + rightSample) / 2;
+            monoChannel.push_back(monoSample);
         }
-        //qDebug() << "leftChannel" << leftChannel;
-        // channelData.append(leftChannel);
-        // channelData.append(rightChannel);
-        //audioData["channelsData"] = channelData;
-        audioData["leftChannel"] = leftChannel;
-        audioData["rightChannel"] = rightChannel;
+        std::vector<float> interpolated_buffer = linear_interpolation(buffer, 500);
+        for (int i = 0; i < interpolated_buffer.size(); ++i) {
+            channelData.append(QVariant(interpolated_buffer[i]));
+        }
+        audioSample->setDataBuffer(monoChannel);
+        audioSample->setInterpolatedData(interpolated_buffer);
+        audioSample->setInterpolatedDataList(channelData);
+
     }
-    return audioData;
+    return audioSample;
 
-
-
-
-
-    // return ;
 }

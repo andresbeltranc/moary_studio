@@ -11,7 +11,7 @@ Item {
         property color headerBackgroundColor: "#1f1f1f"
         property color headerTextColor: "white"
         property color headerTitleColor: "white"
-        property color headerIconsWindowColor: "#D9B561"
+        property color headerIconsWindowColor: "#D9B561"//#D9B561
         property color commonTextColor: "#00dfc3"
         property FontLoader projectFont: FontLoader {source: "qrc:/qml/assets/fonts/IndieFlower-Regular.ttf"}
 

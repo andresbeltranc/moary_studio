@@ -5,15 +5,17 @@
 #include <QVariant>
 #include <QMutex>
 #include <QThread>
+#include "../../persistance/models/project/audio_sample.h"
 
-class AudioController : public QThread
+class AudioController : public QObject
 {
     Q_OBJECT
 public:
     explicit AudioController(QObject *parent = nullptr);
 
+    std::vector<float> linear_interpolation(const std::vector<float> &original_data, int num_interpolated_points);
 public slots:
-    QVariantMap loadAudio(QString path);
+    AudioSample* getAudioSampleFromFile(QString path);
 };
 
 #endif // AUDIOEXTRACTOR_H

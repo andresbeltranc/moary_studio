@@ -18,6 +18,9 @@
         <file>pages/Project/LoadProject.qml</file>
         <file>components/TextFields/FormTextField.qml</file>
         <file>components/Buttons/GeneralButton.qml</file>
+        <file>pages/Project/ProjectItemView.qml</file>
+        <file>assets/3D/stage.obj</file>
+
     </qresource>
     <qresource prefix="/"/>
 </RCC>

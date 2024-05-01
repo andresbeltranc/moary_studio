@@ -9,26 +9,34 @@ import Qt5Compat.GraphicalEffects
 
 
 Window {
-    id: root_window
-    width: 1000
+    id: mainWindow
+    width: Screen.width * 0.6
     minimumWidth: 800
-    height: 800
+    height:  Screen.height * 0.7
     minimumHeight: 600
     visible: true
     flags: Qt.Window | Qt.FramelessWindowHint
     color: "transparent"
+
+
+    function changeLoaderSource(source){
+        //mainWindowLoader.source = ""
+        mainWindowLoader.source = source
+    }
     Timer {
         id: redrawTimer
         interval: 100
         onTriggered: {
-            root.width  = root_window.width
-            root.height = root_window.height
+            root.width  = mainWindow.width
+            root.height = mainWindow.height
         }
     }
     Component.onCompleted: {
-        windowController.restoreAndMoveWindow(root_window)
-        root_window.visible= true
-        root_window.raise()
+        windowController.restoreAndMoveWindow(mainWindow)
+        x = Screen.width / 2 - width / 2
+        y = Screen.height / 2 - height / 2
+        mainWindow.visible= true
+        mainWindow.raise()
 
 
     }
@@ -45,29 +53,23 @@ Window {
 
         Header{
             id: header
+            objectName: "header"
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             Layout.fillWidth: true
             height: 30
         }
-
-        LoadProject{
+        Loader{
+            id: mainWindowLoader
             anchors.top: header.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
 
+            Component.onCompleted: {
+                mainWindowLoader.source = "qrc:/qml/pages/Project/LoadProject.qml"
+            }
         }
-
-        // Dashboard{
-        //     anchors.top: header.bottom
-        //     anchors.left: parent.left
-        //     anchors.right: parent.right
-        //     anchors.bottom: parent.bottom
-        //     Layout.fillWidth: true
-        //     Layout.fillHeight: true
-        // }
-
     }
 }

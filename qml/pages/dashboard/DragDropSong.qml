@@ -1,43 +1,99 @@
 import QtQuick
 import QtQuick.Dialogs
-import QtQuick.Controls
-import AudioController 1.0
+import QtQuick.Controls.Basic
+import QtQuick.Effects
+import QtQuick.Layouts
 
-Item {
+import AudioSample 1.0
+
+Rectangle {
     id:root
+
+    color: master.currentTheme.dashboardBackgroundColor
+    layer.enabled: true
+    clip: true
+    radius: 5
+    layer.effect:MultiEffect {
+        //source: buttonBackground
+        //anchors.fill: buttonBackground
+        autoPaddingEnabled: true
+        shadowBlur: 1.0
+        shadowEnabled: true
+        shadowVerticalOffset: 3
+        shadowHorizontalOffset: 1
+        //opacity: button.pressed ? 0.75 : 1.0
+    }
+    ListModel{
+        id: musicModel
+    }
+    function sampledAdded(sample){
+        console.log("sampledAdded",sample)
+        musicModel.append({fileName:sample.fileName, duration:sample.secondsToRead})
+    }
+    function listOfAudioSamplesChanged(){
+        console.log( console.log("Changed listOfAudioSamples",listOfAudioSamples ))
+    }
+    // function newMusicSampledAdded(){
+    //     console.log("newMusicSampledAdded")
+    //     var audioSamples = currentProject.audioSamples
+
+    //     console.log("new audioSamples", audioSamples)
+    //     musicModel.clear()
+    //     for(var i = 0; i < audioSamples.length; i++){
+    //       //  musicModel.append(audioSamples[i])
+    //         musicModel.insert(audioSamples[i])
+    //         //var currentAudioSample = audioSamples[i]
+    //         //console.log("name",currentAudioSample.fileName)
+    //     }
+
+    // }
+    Component.onCompleted: {
+
+        currentProject.audioSampleAdded.connect(sampledAdded)
+
+        console.log("listOfAudioSamples",listOfAudioSamples )
+        for(var i = 0; i < listOfAudioSamples.length; i++){
+
+            var audioSample = listOfAudioSamples[i]
+            musicModel.append({fileName:audioSample.fileName, duration:audioSample.secondsToRead})
+        }
+        currentProject.audioSamplesChanged.connect(listOfAudioSamplesChanged)
+
+    }
+
 
 
     function processUrls(urls) {
         for (var i = 0; i < urls.length; ++i) {
             var url = urls[i];
             var fileExtension = url.toString().split('.').pop().toLowerCase();
-
-            // Check for music file extensions
             if (["mp3", "wav", "flac", "aac", "m4a", "ogg"].indexOf(fileExtension) !== -1) {
-                //root.musicDropped(url);
-                var audioData = audioExtractor.loadAudio(url.toString().replace("file:///", ""));
-               // console.log("audioData",JSON.stringify(audioData))
-                console.log("audioName:",audioData.audioName)
-                console.log("secondsToRead:",audioData.secondsToRead)
-                console.log("sampleRate:",audioData.sampleRate)
-                console.log("framesPerRead:",audioData.framesPerRead)
-                console.log("numberOfChannels:",audioData.numberOfChannels)
-                console.log("leftChannel",audioData.leftChannel.length)
-                console.log("rightChannel",audioData.rightChannel.length)
-
-
+                var audioSample = audioController.getAudioSampleFromFile(url.toString().replace("file:///", ""));
+               // songDuration = audioSample.secondsToRead
+                currentProject.addAudioSample(audioSample)
+                //listAmplituded = audioSample.interpolatedDataList
             }
         }
     }
 
+
     Rectangle{
         id: titleBar
         anchors.top: parent.top
-        width: parent.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        radius: 2
 
+        color: master.currentTheme.dashboardBackgroundColor
+        layer.enabled: true
+        layer.effect:MultiEffect {
+            autoPaddingEnabled: true
+            shadowBlur: 1.0
+            shadowEnabled: true
+            shadowVerticalOffset: 1
+            shadowHorizontalOffset: 0
+        }
         height: 30
-        color: "transparent"
-
         Text{
             text:" Music Samples"
             color: master.currentTheme.headerIconsWindowColor
@@ -48,11 +104,14 @@ Item {
 
     Rectangle{
         id: listViewContainer
-
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
+        anchors.topMargin: 10
+        anchors.bottomMargin: 10
         anchors.top: titleBar.bottom
         anchors.bottom: parent.bottom
         width: parent.width
-        color: "transparent"
+        color: master.currentTheme.dashboardBackgroundColor
         clip: true
         MouseArea {
             anchors.fill: parent
@@ -78,33 +137,18 @@ Item {
         ScrollView{
             anchors.fill: parent
             anchors.topMargin: 10
+            anchors.leftMargin: 5
             ListView{
                 id: listView
                 width: parent.width
                 height: parent.height
                 model: musicModel
                 spacing: 13
-                ListModel{
-                    id: musicModel
 
-                    ListElement{
-                        name:"Test"
-                        size:"458"
-                        process:"100"
-                        state:"rendering"
-                    }
-                }
                 delegate: SongListItem {
                     width: listView.width * 0.95
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    height: 50
-                    
-                    AudioController{
-                        Component.onCompleted: {
-                            loadAudio("")
-                        }
-                    }
-
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    height: 60
                 }
             }
         }

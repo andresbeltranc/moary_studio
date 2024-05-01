@@ -15,12 +15,9 @@ public:
     void initCoreQmlConnections(QQuickItem* rootObject);
     void setupApplication();
 
-public slots:
-    bool connectToAudioController(QQuickItem* item);
 
 private:
     QQmlApplicationEngine *engine = nullptr;
-    AudioController *audioController = nullptr;
 
     void initQmlEngine();
     void initCoreCppConnections();

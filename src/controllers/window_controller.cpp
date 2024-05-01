@@ -1,5 +1,6 @@
 #include "window_controller.h"
 
+#include <QQuickItem>
 static WNDPROC originalWndProc = nullptr;
 
 WindowController::WindowController(QObject *parent)
@@ -117,7 +118,7 @@ LRESULT CALLBACK CustomWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         if (wParam == TRUE)
         {
             // Get the pointer to the NCCALCSIZE_PARAMS structure
-            NCCALCSIZE_PARAMS* pncsp = (NCCALCSIZE_PARAMS*)lParam;
+             NCCALCSIZE_PARAMS* pncsp = (NCCALCSIZE_PARAMS*)lParam;
 
             // Get the size of the window border
             int border = GetSystemMetrics(SM_CXSIZEFRAME);
@@ -147,9 +148,39 @@ LRESULT CALLBACK CustomWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     //return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
+//     QRect r = headerElement->property("boundingRect").toRect();
 
 void WindowController::restoreAndMoveWindow(QQuickWindow *window) {
     if (!window) return;
+
+    QObject* headerElement = window->findChild<QObject*>("header");
+
+    if (headerElement) {
+        qDebug() << "headerElement found";
+        QRect headerRect = headerElement->property("boundingRect").toRect();
+        qDebug() <<"header" << "Rect: x = " << headerElement->property("x") << ", y = " << headerElement->property("y")  << ", width = " << headerElement->property("width")  << ", height = " << headerElement->property("height");
+
+        QList<QObject*> childList = headerElement->children();
+        for (int i = 0; i < childList.length(); i++) {
+            QObject* child = childList.at(i);
+            QQuickItem* childItem = qobject_cast<QQuickItem*>(child);
+            if (childItem) {
+                QRect childRect = childItem->property("boundingRect").toRect();
+                qDebug()<<"child" << "Rect: x = " << childRect.x() << ", y = " << childRect.y() << ", width = " << childRect.width() << ", height = " << childRect.height();
+
+                QRect combinedChildArea;
+                combinedChildArea = combinedChildArea.united(childRect);
+            }
+
+        }
+
+
+
+
+    }
+
+
+
     HWND hwnd = getHWND(window);
 
 
@@ -159,21 +190,10 @@ void WindowController::restoreAndMoveWindow(QQuickWindow *window) {
 
     // Add the WS_THICKFRAME and WS_MAXIMIZEBOX flags
     style |=  WS_THICKFRAME | WS_MAXIMIZEBOX;
-
     style &= ~WS_SYSMENU | ~WS_CAPTION  ;
-
-
     // Set the new window style
     SetWindowLongPtr(hwnd, GWL_STYLE, style);
 
-
-
     originalWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(CustomWndProc)));
-
-
-  //  SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(CustomWndProc));
-
-
-
 }
 

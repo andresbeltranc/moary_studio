@@ -11,7 +11,7 @@ set(CONAN_LIBS_FOLDER "conan_libs")
 set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/src/libs/${CONAN_LIBS_FOLDER}")
 
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Multimedia Concurrent)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Quick3D Multimedia Concurrent)
 qt_standard_project_setup(REQUIRES 6.5)
 
 find_package(SndFile REQUIRED)
@@ -23,7 +23,14 @@ set(APP_ICON_RESOURCE_WINDOWS "resources/moary.rc")
 set(PROJECT_SOURCES
     src/utils/Singleton.h
 
-
+    src/persistance/models/project/project.h
+    src/persistance/models/project/project.cpp
+    src/persistance/project_controller.h
+    src/persistance/project_controller.cpp
+    src/persistance/models/project/music_project.h
+    src/persistance/models/project/music_project.cpp
+    src/persistance/project_factory.h
+    src/persistance/project_factory.cpp
     src/controllers/Audio/audio_controller.h
     src/controllers/Audio/audio_controller.cpp
     src/controllers/window_controller.h
@@ -40,6 +47,8 @@ add_executable(MoaryStudio
   WIN32
   ${PROJECT_SOURCES}
   ${APP_ICON_RESOURCE_WINDOWS}
+  src/controllers/Audio/customqml.h src/controllers/Audio/customqml.cpp
+  src/persistance/models/project/audio_sample.h src/persistance/models/project/audio_sample.cpp
 
   )
 
@@ -65,6 +74,7 @@ endif()
 
 target_link_libraries(MoaryStudio PRIVATE
     Qt6::Quick
+    Qt6::Quick3D
     Qt6::Multimedia
     Qt6::Concurrent
     SndFile::sndfile

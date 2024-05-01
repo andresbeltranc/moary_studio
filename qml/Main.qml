@@ -4,16 +4,23 @@ import QtQuick.Layouts
 import "pages/dashboard"
 import "layouts"
 import "themes"
+import ProjectController 1.0
+import org.Moary 1.0 // Assuming version 1.0 for your interface
+import MusicProject 1.0
 
 Item{
     id: master
 
     property alias currentTheme: theme.currentTheme
-
     Theme{
         id: theme
     }
-
+    ProjectController{
+        id: projectController
+        onCurrentProjectChanged: {
+            console.log("currentProjectChanged",currentProject)
+        }
+    }
     signal initApp()
     onInitApp: {
         console.log("InitApp....")

@@ -85,7 +85,8 @@ MoaryPopup {
                 id: folderDialog
                 currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
                 onAccepted: {
-                    projectLocation.text = folderDialog.currentFolder
+                    var path = String(folderDialog.currentFolder)
+                    projectLocation.text = path.replace("file:///", "")
                 }
             }
             GeneralButton{
@@ -117,6 +118,10 @@ MoaryPopup {
             textColor: "#00987E"
             border.color: "#00987E"
             onClicked: {
+                var path =  String((projectLocation.text)).replace("file:///", "")
+
+
+                projectController.createProject(0,projectName.text, projectLocation.text,"andres")
 
             }
         }
